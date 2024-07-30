@@ -12,7 +12,11 @@ export interface Form {
     password: string,
     confirmPassword: string,
 }
-
+const setCookie = (name: string, value: string, days: number) => {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+};
 export default function Login() {
     const router = useRouter();
     const [formData, setFormData] = useState<Form>({
@@ -23,6 +27,7 @@ export default function Login() {
         password: '',
         confirmPassword: ''
     });
+    const [buttonDisable, setButtonDisable] = useState(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -58,8 +63,9 @@ export default function Login() {
         });
         console.log(result);
         if (result) {
+            setCookie("user", JSON.stringify(result), 7)
             localStorage.setItem("user", JSON.stringify(result));
-            router.push('/')
+            router.push('/login')
             console.log('Signup successful');
         } else {
             console.log('Signup failed');

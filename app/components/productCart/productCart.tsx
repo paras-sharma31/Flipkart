@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardBody, CardFooter, Heading, Image, Stack, Text, Flex } from "@chakra-ui/react";
 import { MinusCircle, PlusCircle } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface PrinterId {
     _id: string;
@@ -42,8 +42,9 @@ const ProductCart = () => {
             const result = await response.json();//
             console.log(result, 'ed3ubfd4bu')
             setProducts(result);
+            console.log(result, 'wdbd3ud4')
         }
-        const currentData = localStorage.getItem('productsData' || [])
+        const currentData = localStorage.getItem('productsData' || '[]')
         const parseData = JSON.parse(currentData)
         setCartData(parseData)
     };
@@ -55,34 +56,49 @@ const ProductCart = () => {
     const updateQuantity = async (id: string, quantity: number): Promise<void> => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const token = user.token;
+
         if (token) {
-            const response = await fetch(`https://flipakartworking.onrender.com/api/cart/${id}`, {
-                method: 'PUT',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ quantity })
-            });
-            const result = await response.json();
-            setProducts(result);
+            try {
+                const response = await fetch(`https://flipakartworking.onrender.com/api/cart/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ quantity })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update quantity');
+                }
+
+                const result = await response.json();
+                setProducts(result);
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+            }
+        } else {
+            // Handle localStorage case
+            const updatedCartData = cartData.map(item =>
+                item.printerId._id === id ? { ...item, quantity } : item
+            );
+            setCartData(updatedCartData);
+            localStorage.setItem('productsData', JSON.stringify(updatedCartData));
         }
-        else {
-            const updateCartData = cartData.map(item => item.printerId._id === id ? { ...item, quantity } : item)
-            setCartData(updateCartData)
-            localStorage.setItem('productsData', JSON.stringify(updateCartData))
-        }
-    }
+    };
 
     const incrementQuantity = (id: string, currentQuantity: number) => {
-        updateQuantity(id, currentQuantity + 1);
+        const newQuantity = currentQuantity + 1;
+        updateQuantity(id, newQuantity);
     };
 
-    const decrementQuantity = (itemId: string, currentQuantity: number) => {
+    const decrementQuantity = (id: string, currentQuantity: number) => {
         if (currentQuantity > 1) {
-            updateQuantity(itemId, currentQuantity - 1);
+            const newQuantity = currentQuantity - 1;
+            updateQuantity(id, newQuantity);
         }
     };
+
 
     const removeCartItem = async (itemId: string) => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -121,7 +137,7 @@ const ProductCart = () => {
     const priceDetails = calculatePriceDetails();
 
     return (
-        <Box bg="gray.100" height='100vh'>
+        < Box bg="gray.100" height='100vh' >
             <Box p={4} bg="gray.100" display="flex" justifyContent="center" gap="20px">
                 <Box maxW="4xl" bg="white" shadow="lg" rounded="lg" height='fit-content' >
                     <Box borderBottom="1px" borderColor="gray.200" p={4}>
@@ -138,60 +154,62 @@ const ProductCart = () => {
                     </Box>
 
                     <Box>
-                        {(products ? products.items : cartData).map((item: Items) => (
-                            <Card
-                                direction={{ base: "column", sm: "row" }}
-                                overflow="hidden"
-                                key={item.printerId._id}
-                                border="none"
-                                boxShadow="none"
-                                m={4}
-                                h='200px'
-                            >
-                                <Image
-                                    objectFit="contain"
-                                    maxW={{ base: "100%", sm: "200px" }}
-                                    src={item.printerId.headImage}
-                                    alt={item.printerId.productTitle}
-                                />
+                        {(products && products.items.length > 0 || cartData.length > 0) ? (
+                            (products ? products.items : cartData).map((item: Items) => (
+                                <Card
+                                    direction={{ base: "column", sm: "row" }}
+                                    overflow="hidden"
+                                    key={item.printerId._id}
+                                    border="none"
+                                    boxShadow="none"
+                                    m={4}
+                                    h='200px'
+                                >
+                                    <Image
+                                        objectFit="contain"
+                                        maxW={{ base: "100%", sm: "200px" }}
+                                        src={item.printerId.headImage}
+                                        alt={item.printerId.productTitle}
+                                    />
 
-                                <Stack flex="1">
-                                    <CardBody>
-                                        <Heading size="sm" fontWeight={400}>{item.printerId.productTitle}</Heading>
-                                        <Flex mt={2} alignItems="center">
-                                            <Text as="del" color="gray.500">
-                                                ₹{item.printerId.price}
-                                            </Text>
-                                            <Text ml={2} fontWeight="bold">
-                                                ₹{item.printerId.discountedPrice}
-                                            </Text>
-                                            <Text ml={2} color="green.600" fontWeight="bold">
-                                                {item.printerId.discountPercentage}%
-                                            </Text>
-                                        </Flex>
-                                    </CardBody>
+                                    <Stack flex="1">
+                                        <CardBody>
+                                            <Heading size="sm" fontWeight={400}>{item.printerId.productTitle}</Heading>
+                                            <Flex mt={2} alignItems="center">
+                                                <Text as="del" color="gray.500">
+                                                    ₹{item.printerId.price}
+                                                </Text>
+                                                <Text ml={2} fontWeight="bold">
+                                                    ₹{item.printerId.discountedPrice}
+                                                </Text>
+                                                <Text ml={2} color="green.600" fontWeight="bold">
+                                                    {item.printerId.discountPercentage}%
+                                                </Text>
+                                            </Flex>
+                                        </CardBody>
 
-                                    <CardFooter>
-                                        <Flex alignItems="center">
-                                            <Button variant="ghost" onClick={() => decrementQuantity(item.printerId._id, item.quantity)}>
-                                                <MinusCircle />
-                                            </Button>
-                                            <Text mx={2}>{item.quantity}</Text>
-                                            <Button variant="ghost" onClick={() => incrementQuantity(item.printerId._id, item.quantity)}>
-                                                <PlusCircle />
-                                            </Button>
-                                            <Link href="" passHref>
-                                                <Button variant="link" ml={4} colorScheme="blue" onClick={() => removeCartItem(item.printerId._id)}>
-                                                    Remove
+                                        <CardFooter>
+                                            <Flex alignItems="center">
+                                                <Button variant="ghost" onClick={() => decrementQuantity(item.printerId._id, item.quantity)}>
+                                                    <MinusCircle />
                                                 </Button>
-                                            </Link>
-                                        </Flex>
-                                    </CardFooter>
-                                </Stack>
-                            </Card>
-                        )) || (
-                                <Box p={4}>Loading...</Box>
-                            )}
+                                                <Text mx={2}>{item.quantity}</Text>
+                                                <Button variant="ghost" onClick={() => incrementQuantity(item.printerId._id, item.quantity)}>
+                                                    <PlusCircle />
+                                                </Button>
+                                                <Link href="" passHref>
+                                                    <Button variant="link" ml={4} colorScheme="blue" onClick={() => removeCartItem(item.printerId._id)}>
+                                                        Remove
+                                                    </Button>
+                                                </Link>
+                                            </Flex>
+                                        </CardFooter>
+                                    </Stack>
+                                </Card>
+                            ))
+                        ) : (
+                            <Box p={4}>Loading...</Box>
+                        )}
                     </Box>
 
 
@@ -231,7 +249,7 @@ const ProductCart = () => {
                     </Box>
                 </Box>
             </Box>
-        </Box>
+        </Box >
     );
 };
 

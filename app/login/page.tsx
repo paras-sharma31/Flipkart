@@ -1,15 +1,21 @@
-'use client';
+'use client'
 import Link from "next/link"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useUserContext } from "../utils/userContext";
-import { Spinner } from '@chakra-ui/react'
-
+import { Spinner } from "@chakra-ui/react";
 
 export interface FormData {
     email: string,
     password: string,
 }
+const setCookie = (name: string, value: string, days: number) => {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+};
+
+
 export default function Login() {
     const router = useRouter()
     const { isLoggedIn, setIsLoggedIn } = useUserContext()
@@ -44,8 +50,10 @@ export default function Login() {
         });
         setLoading(false);
         if (result && result.token) {
+            setCookie('user', JSON.stringify(result), 7); // Setting cookie for 7 days
             localStorage.setItem('user', JSON.stringify(result));
             setIsLoggedIn(true);
+
             router.push('/');
         } else {
             console.log('Login failed');

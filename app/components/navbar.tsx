@@ -8,7 +8,9 @@ import { useEffect } from 'react';
 import { useUserContext } from '../utils/userContext';
 
 export default function Navbar() {
-
+    const deleteCookie = (name: string) => {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    };
     const { isLoggedIn, setIsLoggedIn } = useUserContext()
     const router = useRouter()
     useEffect(() => {
@@ -17,6 +19,7 @@ export default function Navbar() {
         }
     }, [])
     const handleLogout = () => {
+        deleteCookie('user')
         localStorage.removeItem('user');
         router.push('/login')
         setIsLoggedIn(false)

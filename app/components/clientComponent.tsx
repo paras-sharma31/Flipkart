@@ -39,7 +39,10 @@ const ClientComponent = ({ initialData, initialFilters }: PageProps) => {
         };
         fetchFilteredProducts();
     }, [filters]);
-    return <ProductList data={data} setFilters={setFilters} />;
+
+    return (
+        <ProductList data={data} setFilters={setFilters} />
+    )
 };
 
 export default ClientComponent;

@@ -6,7 +6,6 @@ import { ProductDetails } from '../../components/productDetails';
 import { SlideImages } from '../../components/sidebar/slideImage';
 import { useRouter } from 'next/navigation';
 import { fetchCart } from '../../cart/page';
-import Result from 'postcss/lib/result';
 
 interface Dimensions {
     Height: string;
@@ -143,14 +142,8 @@ const ProductDetail: FC<ProductDetailProps> = ({ params }) => {
                 } catch (error) {
                     currentCart = [];
                 }
-
-                // Update the cart data
                 const updatedCart = [...currentCart, newCartItem];
-
-                // Save the updated cart data to localStorage
                 localStorage.setItem('productsData', JSON.stringify(updatedCart));
-
-                // Optionally, you can update the state if you need to reflect changes in the UI
                 setProduct((prev) => ({ ...prev, data: updatedCart }));
 
                 router.push('/cart');
