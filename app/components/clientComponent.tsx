@@ -30,7 +30,6 @@ export interface PageProps {
 
 const ClientComponent = ({ initialData, initialFilters }: PageProps) => {
     const [data, setData] = useState<Product[]>(initialData);
-    console.log(initialFilters, "initialFilters")
     const [filters, setFilters] = useState<Filter>(initialFilters);
     useEffect(() => {
         const fetchFilteredProducts = async () => {

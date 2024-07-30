@@ -26,7 +26,6 @@ export const Ratings = ({ setRating }: RatingsProps) => {
     useEffect(() => {
         setRating(selectedRatings);
     }, [selectedRatings, setRating]);
-    console.log(selectedRatings, 'selectedRatings')
 
     return (
         <Accordion allowToggle>

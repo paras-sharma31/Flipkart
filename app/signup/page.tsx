@@ -27,7 +27,6 @@ export default function Login() {
         password: '',
         confirmPassword: ''
     });
-    const [buttonDisable, setButtonDisable] = useState(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

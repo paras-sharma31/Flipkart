@@ -1,19 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
 import ProductCart from '../components/productCart/productCart';
-import { useParams, useRouter } from 'next/navigation';
-
-interface Items {
-    printerId: string;
-    quantity: number;
-}
-
-export interface Cart {
-    _id: string;
-    userId: string;
-    items: Items[];
-}
-
 export const fetchCart = async (printerId: string): Promise<void> => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = user.token;
@@ -34,7 +20,6 @@ export const fetchCart = async (printerId: string): Promise<void> => {
         return data;
     }
     const currentData = JSON.parse(localStorage.getItem('productsData') || '[]');
-    console.log(currentData, "Data from local storage");
 }
 
 const Cart = () => {

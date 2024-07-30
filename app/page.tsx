@@ -9,10 +9,7 @@ export async function fetchProducts(filters: Filter): Promise<Product[]> {
     },
     body: JSON.stringify(filters),
   });
-
   const result = await response.json();
-  console.log(result, '3dj3dibu3bdu')
-
   return result.data || [];
 }
 const Page = async () => {

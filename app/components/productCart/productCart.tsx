@@ -40,9 +40,7 @@ const ProductCart = () => {
                 },
             });
             const result = await response.json();//
-            console.log(result, 'ed3ubfd4bu')
             setProducts(result);
-            console.log(result, 'wdbd3ud4')
         }
         const currentData = localStorage.getItem('productsData' || '[]')
         const parseData = JSON.parse(currentData)

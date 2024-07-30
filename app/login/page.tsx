@@ -3,7 +3,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useUserContext } from "../utils/userContext";
-import { Spinner } from "@chakra-ui/react";
 
 export interface FormData {
     email: string,
@@ -15,11 +14,9 @@ const setCookie = (name: string, value: string, days: number) => {
     document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
 };
 
-
 export default function Login() {
     const router = useRouter()
     const { isLoggedIn, setIsLoggedIn } = useUserContext()
-    const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormData>({
         email: '',
@@ -43,12 +40,10 @@ export default function Login() {
     }
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setLoading(true);
         const result = await userLogin({
             email: formData.email,
             password: formData.password,
         });
-        setLoading(false);
         if (result && result.token) {
             setCookie('user', JSON.stringify(result), 7); // Setting cookie for 7 days
             localStorage.setItem('user', JSON.stringify(result));

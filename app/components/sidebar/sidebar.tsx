@@ -19,7 +19,6 @@ export const Sidebar = ({ setFilters }: SidebarProps) => {
         if (brand.length > 0) filters.brand = brand;
         if (rating.length > 0) filters.rating = rating;
         if (minPrice.minPrice) filters.minPrice = minPrice.minPrice;
-        console.log(minPrice, 'efswsswswscee')
         if (maxPrice.maxPrice) filters.maxPrice = maxPrice.maxPrice;
         setFilters(filters);
     }, [brand, rating, minPrice, maxPrice]);

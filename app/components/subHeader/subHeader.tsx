@@ -15,7 +15,6 @@ const SubHeader = ({ setFilters }: SortBy) => {
         if (createdAt.length > 0) filters.createdAt = createdAt
         if (sortOrder.length > 0) filters.sortOrder = sortOrder
         if (sortField.length > 0) filters.sortField = sortField
-        console.log(filters, "filter")
         setFilters(filters);
     }, [createdAt, sortField, sortOrder])
 

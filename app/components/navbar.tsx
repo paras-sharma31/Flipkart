@@ -35,7 +35,6 @@ export default function Navbar() {
             setIsLoggedIn(true)
         }
     })
-    console.log(isLoggedIn, "loggedIN")
     return (
         <div className='border-b  border-gray-200 py-3 sticky top-0 z-10 bg-[#2874f0]'>
             <div className="container sm:flex justify-center gap-6 items-center">
