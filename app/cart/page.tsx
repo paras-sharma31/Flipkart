@@ -1,8 +1,23 @@
 'use client';
+import { FC } from 'react';
 import ProductCart from '../components/productCart/productCart';
-export const fetchCart = async (printerId: string): Promise<void> => {
+
+interface Items {
+    printerId: string;
+    quantity: number;
+}
+
+export interface Cart {
+    _id: string;
+    userId: string;
+    items: Items[];
+}
+
+// Async function to fetch the cart data
+export const fetchCart = async (printerId: string): Promise<Cart | undefined> => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = user.token;
+
     if (token) {
         const response = await fetch(`https://flipakartworking.onrender.com/api/cart/`, {
             method: 'POST',
@@ -16,58 +31,19 @@ export const fetchCart = async (printerId: string): Promise<void> => {
         if (!response.ok) {
             throw new Error('Failed to fetch product cart');
         }
-        const data = await response.json();
+
+        const data: Cart = await response.json();
         return data;
+    } else {
+        const currentData: Cart = JSON.parse(localStorage.getItem('productsData') || '[]');
+        return currentData;
     }
-    const currentData = JSON.parse(localStorage.getItem('productsData') || '[]');
 }
-
-const Cart = () => {
-    // const params = useParams<{ id: string }>()
-    // const [error, setError] = useState<string | null>(null);
-    // const [cartData, setCartData] = useState<Cart | null>(null);
-    // const router = useRouter();
-    // const printerId = params.id
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const user = JSON.parse(localStorage.getItem('user') || '{}');
-    //             const token = user.token;
-
-    //             if (token) {
-    //                 const data = await fetchCart(printerId);
-    //                 setCartData(data);
-    //                 router.push('/cart');
-    //             } else {
-    //                 const data = JSON.parse(localStorage.getItem('productsData') || '[]');
-    //                 setCartData(data);
-    //                 console.log(data, 'nd3nd3id')
-    //                 if (data.length > 0) {
-    //                     console.log("ENTERRRR")
-    //                     router.push('/cart');
-    //                 } else {
-    //                     console.log('No products in local storage');
-    //                     setError('No products in local storage');
-    //                 }
-    //             }
-    //         } catch (error) {
-    //             setError(error.message, "MESSAGE");
-    //         }
-    //     };
-
-    //     fetchData();
-    // }, [printerId, router]);
-
-    // if (error) {
-    //     return <div>Error: {error}</div>;
-    // }
-
+const CartPage: FC = () => {
     return (
         <div>
-            <div>
-                <ProductCart />
-            </div>
+            <ProductCart />
         </div>
     );
 }
-export default Cart;
+export default CartPage; 
