@@ -93,9 +93,9 @@ export default function Login() {
                                 className='w-full p-2 border border-gray-300 rounded'
                             />
                         </div>
-
                         <div>
-                            <p className='text-sm text-gray-500 font-medium p-2'>By continuing, you agree to Flipkart's <span className='text-[#2874f0]'>Terms of Use</span>
+                            <p className='text-sm text-gray-500 font-medium p-2'>By continuing, you agree to Flipkart
+                                <span className='text-[#2874f0]'>Terms of Use</span>
                                 and
                                 <span className='text-[#2874f0]'> Privacy Policy.</span>
                             </p>
